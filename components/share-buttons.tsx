@@ -7,7 +7,18 @@ const getUrl = () => window.location.href.split("#")[0];
 const canNativeShare = () => typeof navigator.share === "function";
 
 /** Share a blog post on social networks, copy its link, or use the phone's share menu. */
-export function ShareButtons({ title, compact = false }: { title: string; compact?: boolean }) {
+export function ShareButtons({
+  title,
+  compact = false,
+  imageUrl,
+  imageName = "post.png",
+}: {
+  title: string;
+  compact?: boolean;
+  /** Picture card for the post — Instagram doesn't accept links, so you post this image instead. */
+  imageUrl?: string;
+  imageName?: string;
+}) {
   // Read the page URL only in the browser (it's empty during server rendering).
   const url = useSyncExternalStore(subscribe, getUrl, () => "");
   const native = useSyncExternalStore(subscribe, canNativeShare, () => false);
@@ -61,6 +72,14 @@ export function ShareButtons({ title, compact = false }: { title: string; compac
       <button type="button" onClick={copy} className={btn}>
         {copied ? "✓ Link copied" : "Copy link"}
       </button>
+      {imageUrl && (
+        <a href={imageUrl} download={imageName} className={btn} title="Download a picture of this post to upload to Instagram">
+          <span aria-hidden className="grid size-4 place-items-center rounded-sm bg-accent-soft text-[9px] font-bold text-accent">
+            ig
+          </span>
+          Image for Instagram
+        </a>
+      )}
     </div>
   );
 }

@@ -216,6 +216,24 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
           <Field label="Email" value={p.email} onChange={(v) => setProfile({ email: v })} />
           <Field label="LinkedIn URL" value={p.linkedin} onChange={(v) => setProfile({ linkedin: v })} />
           <Field
+            label="Facebook page URL"
+            value={p.facebook}
+            placeholder="https://www.facebook.com/your.name"
+            onChange={(v) => setProfile({ facebook: v })}
+          />
+          <Field
+            label="Instagram URL"
+            value={p.instagram}
+            placeholder="https://www.instagram.com/yourname"
+            onChange={(v) => setProfile({ instagram: v })}
+          />
+          <Field
+            label="YouTube channel URL"
+            value={p.youtube}
+            placeholder="https://www.youtube.com/@yourname"
+            onChange={(v) => setProfile({ youtube: v })}
+          />
+          <Field
             label="Photo"
             value={p.photo}
             placeholder="/profile.jpg"

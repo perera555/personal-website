@@ -19,6 +19,9 @@ export type SiteContent = {
     locations: string[];
     email: string;
     linkedin: string;
+    facebook: string;
+    instagram: string;
+    youtube: string;
     photo: string; // path in /public, e.g. "/profile.jpg" — empty = show initials
     cvFile: string; // path in /public, e.g. "/cv.pdf" — empty = hide button
     availability: string;
@@ -46,6 +49,10 @@ export const defaultContent: SiteContent = {
     locations: ["Melbourne, Australia", "Colombo, Sri Lanka"],
     email: "thamaradhanushkaperera@gmail.com",
     linkedin: "https://www.linkedin.com/in/thamara-perera-a65a4173/",
+    // Add your profile links in /admin → Contact & links
+    facebook: "",
+    instagram: "",
+    youtube: "",
     photo: "",
     cvFile: "",
     availability: "Available immediately",

@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Container, SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { Container, SiteFooter, SiteHeader, socialLinks } from "@/components/site-chrome";
 import { FeaturedPost, PostCard } from "@/components/post-card";
 import { TiltCard } from "@/components/tilt-card";
 import { getContent } from "@/lib/content";
 import type { SiteContent } from "@/lib/default-content";
 import { getPublishedPosts, type Post } from "@/lib/posts";
+import { getSiteUrl, jsonLd, nameVariants } from "@/lib/site-url";
 import { ContactForm } from "./contact-form";
 
 type C = { c: SiteContent };
@@ -14,6 +15,7 @@ export default async function Home() {
   const [c, posts] = await Promise.all([getContent(), getPublishedPosts()]);
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(personSchema(c))} />
       <SiteHeader c={c} />
       <main className="flex-1">
         <Hero c={c} />
@@ -27,6 +29,51 @@ export default async function Home() {
       <SiteFooter c={c} />
     </>
   );
+}
+
+/* ---------- Google structured data: who this website is about ---------- */
+
+function personSchema(c: SiteContent) {
+  const url = getSiteUrl();
+  const p = c.profile;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${url}/#person`,
+        name: p.name,
+        alternateName: nameVariants(p.name, p.shortName).slice(1),
+        url,
+        image: p.photo ? `${url}${p.photo}` : `${url}/opengraph-image`,
+        jobTitle: p.role,
+        worksFor: p.company ? { "@type": "Organization", name: p.company } : undefined,
+        description: p.tagline,
+        email: p.email ? `mailto:${p.email}` : undefined,
+        // Links Google uses to connect your social profiles to your name
+        sameAs: socialLinks(p).map((l) => l.href),
+        homeLocation: p.locations.map((l) => ({ "@type": "Place", name: l })),
+        alumniOf: c.degrees.map((d) => ({ "@type": "EducationalOrganization", name: d.school })),
+        knowsLanguage: c.languages.map((l) => l.name),
+        knowsAbout: c.skillGroups.flatMap((g) => g.skills).slice(0, 20),
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${url}/#website`,
+        url,
+        name: `${p.name} — Personal Website & Blog`,
+        alternateName: nameVariants(p.name, p.shortName).map((n) => `${n} Blog`),
+        author: { "@id": `${url}/#person` },
+      },
+      {
+        "@type": "Blog",
+        "@id": `${url}/blog#blog`,
+        url: `${url}/blog`,
+        name: `${p.shortName || p.name} Blog`,
+        author: { "@id": `${url}/#person` },
+      },
+    ],
+  };
 }
 
 /* ---------- Building blocks ---------- */
@@ -382,13 +429,13 @@ function Contact({ c }: C) {
                   </a>
                 </li>
               )}
-              {p.linkedin && (
-                <li>
-                  <a href={p.linkedin} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
-                    LinkedIn ↗
+              {socialLinks(p).map((l) => (
+                <li key={l.name}>
+                  <a href={l.href} target="_blank" rel="noopener noreferrer me" className="underline-offset-4 hover:underline">
+                    {l.name} ↗
                   </a>
                 </li>
-              )}
+              ))}
             </ul>
           </div>
           <div className="relative">

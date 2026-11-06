@@ -8,6 +8,7 @@ import { Container, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { getContent } from "@/lib/content";
 import { Markdown, readingTime } from "@/lib/markdown";
 import { formatDate, getPublishedPost, getPublishedPosts } from "@/lib/posts";
+import { getSiteUrl, jsonLd } from "@/lib/site-url";
 
 // Prerender existing posts at build time; new posts are generated on first visit.
 export async function generateStaticParams() {
@@ -19,10 +20,23 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const post = await getPublishedPost((await params).slug);
   if (!post) return { title: "Post not found" };
+  const { profile } = await getContent();
   return {
     title: post.title,
     description: post.excerpt,
-    openGraph: { title: post.title, description: post.excerpt, type: "article", images: post.cover ? [post.cover] : [] },
+    keywords: [...post.tags, profile.name, `${profile.shortName} blog`],
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      url: `/blog/${post.slug}`,
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      authors: [profile.name],
+      tags: post.tags,
+      ...(post.cover ? { images: [post.cover] } : {}),
+    },
   };
 }
 
@@ -51,8 +65,25 @@ async function Article({
   const post = await getPublishedPost(slug);
   if (!post) notFound();
 
+  const url = getSiteUrl();
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    url: `${url}/blog/${post.slug}`,
+    mainEntityOfPage: `${url}/blog/${post.slug}`,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    keywords: post.tags.join(", "),
+    image: post.cover ? (post.cover.startsWith("http") ? post.cover : `${url}${post.cover}`) : `${url}/blog/${post.slug}/opengraph-image`,
+    author: { "@type": "Person", "@id": `${url}/#person`, name: author, url },
+    isPartOf: { "@id": `${url}/blog#blog` },
+  };
+
   return (
     <article className="relative">
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(schema)} />
       <Container className="max-w-3xl py-14 sm:py-20">
         <Link href="/blog" className="text-sm text-muted hover:text-accent">
           ← All posts
@@ -106,7 +137,11 @@ async function Article({
             .
           </p>
           <div className="mt-5">
-            <ShareButtons title={post.title} />
+            <ShareButtons
+              title={post.title}
+              imageUrl={`/blog/${post.slug}/opengraph-image`}
+              imageName={`${post.slug}.png`}
+            />
           </div>
         </div>
       </Container>

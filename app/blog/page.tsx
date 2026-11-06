@@ -4,10 +4,17 @@ import { Container, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { getContent } from "@/lib/content";
 import { getPublishedPosts } from "@/lib/posts";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Stories, thoughts and updates — on technology, work, travel and life.",
-};
+// Title shown in Google, e.g. "Dhanushka Perera Blog — Stories, thoughts and updates"
+export async function generateMetadata(): Promise<Metadata> {
+  const { profile } = await getContent();
+  const blogName = `${profile.shortName || profile.name} Blog`;
+  return {
+    title: { absolute: `${blogName} — Stories, thoughts and updates` },
+    description: `The blog of ${profile.name}: stories, thoughts and updates on technology, work, travel and life.`,
+    alternates: { canonical: "/blog" },
+    openGraph: { title: blogName, type: "website", url: "/blog" },
+  };
+}
 
 export default async function BlogPage() {
   const [c, posts] = await Promise.all([getContent(), getPublishedPosts()]);
@@ -22,7 +29,9 @@ export default async function BlogPage() {
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
               Blog · {posts.length} {posts.length === 1 ? "post" : "posts"}
             </p>
-            <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">Notes &amp; updates</h1>
+            <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
+              {c.profile.shortName || c.profile.name}&apos;s Blog
+            </h1>
             <p className="mt-4 text-lg text-muted">
               Stories, thoughts and updates — on technology, work, travel and life. By {c.profile.name}.
             </p>

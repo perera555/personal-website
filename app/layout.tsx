@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { getContent } from "@/lib/content";
+import { getSiteUrl, nameVariants } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,13 +22,28 @@ const fraunces = Fraunces({
 
 export async function generateMetadata(): Promise<Metadata> {
   const { profile } = await getContent();
-  const title = [profile.name, profile.role].filter(Boolean).join(" — ");
+  const names = nameVariants(profile.name, profile.shortName);
+  const title = `${profile.name}${profile.role ? ` — ${profile.role}` : ""} | Personal Website & Blog`;
+  const description = `${profile.name} (${names.slice(1).join(", ")}): ${profile.tagline}`;
   return {
-    // Set SITE_URL (e.g. https://yourname.com) when the site is online, so shared links show images.
-    metadataBase: process.env.SITE_URL ? new URL(process.env.SITE_URL) : undefined,
-    title: { default: title, template: `%s — ${profile.name}` },
-    description: profile.tagline,
-    openGraph: { title, description: profile.tagline, type: "profile" },
+    metadataBase: new URL(getSiteUrl()),
+    title: { default: title, template: `%s — ${profile.shortName || profile.name}` },
+    description,
+    applicationName: profile.name,
+    authors: [{ name: profile.name, url: getSiteUrl() }],
+    creator: profile.name,
+    keywords: [...names, profile.role, profile.company, "personal website", "blog", ...profile.locations].filter(Boolean),
+    alternates: { canonical: "/" },
+    openGraph: {
+      title,
+      description: profile.tagline,
+      type: "profile",
+      siteName: profile.name,
+      locale: "en_AU",
+    },
+    twitter: { card: "summary_large_image", title, description: profile.tagline },
+    // Google Search Console: paste the verification code into GOOGLE_SITE_VERIFICATION
+    verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
   };
 }
 

@@ -38,7 +38,7 @@ SESSION_SECRET=any-long-random-text
 
 1. Import this GitHub repository at vercel.com.
 2. In the project, go to **Storage → Create Database → Upstash (Redis)** and connect it to the project.
-3. Under **Settings → Environment Variables**, add `ADMIN_PASSWORD`, `SESSION_SECRET` and `SITE_URL`.
+3. Under **Settings → Environment Variables**, add `ADMIN_PASSWORD`, `SESSION_SECRET` and `SITE_URL` (your domain, e.g. `https://dhanushkaperera.com`). Optionally add `GOOGLE_SITE_VERIFICATION` (the code from Google Search Console).
 4. Redeploy. After that, every push to `main` deploys automatically.
 
 ## Writing blog posts

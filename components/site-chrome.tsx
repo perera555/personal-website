@@ -5,6 +5,28 @@ export function Container({ children, className = "" }: { children: React.ReactN
   return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>;
 }
 
+/** The social profiles that have been filled in (in /admin → Contact & links). */
+export function socialLinks(p: SiteContent["profile"]) {
+  return [
+    { name: "LinkedIn", href: p.linkedin },
+    { name: "Facebook", href: p.facebook },
+    { name: "Instagram", href: p.instagram },
+    { name: "YouTube", href: p.youtube },
+  ].filter((l) => l.href);
+}
+
+export function SocialLinks({ c, className = "" }: { c: SiteContent; className?: string }) {
+  return (
+    <>
+      {socialLinks(c.profile).map((l) => (
+        <a key={l.name} href={l.href} target="_blank" rel="noopener noreferrer me" className={className}>
+          {l.name} ↗
+        </a>
+      ))}
+    </>
+  );
+}
+
 const nav = [
   { href: "/blog", label: "Blog" },
   { href: "/#about", label: "About" },
@@ -69,15 +91,11 @@ export function SiteFooter({ c }: { c: SiteContent }) {
     <footer className="border-t border-border py-10">
       <Container className="flex flex-col gap-3 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>© {c.profile.name}</p>
-        <div className="flex gap-5">
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
           <Link href="/blog" className="hover:text-foreground">
             Blog
           </Link>
-          {c.profile.linkedin && (
-            <a href={c.profile.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
-              LinkedIn
-            </a>
-          )}
+          <SocialLinks c={c} className="hover:text-foreground" />
           <span>{c.profile.locations.join(" · ")}</span>
         </div>
       </Container>
