@@ -16,8 +16,89 @@ export type Post = {
   updatedAt: string; // ISO timestamp
 };
 
-// Shown until the first post is saved from /admin. Edit or delete it there.
+// Shown until the first post is saved from /admin. Edit or delete them there.
 const starterPosts: Post[] = [
+  {
+    id: "learning-web-development",
+    slug: "learning-web-development-after-15-years-in-it",
+    title: "Learning web development after 15 years in IT",
+    excerpt:
+      "I've spent my career keeping systems running. In 2025 I decided to learn how to build them — and this website is the result.",
+    body: `For most of my career, my job has been to keep technology working for other people. At the Central Bank of Sri Lanka, at USN Packaging Lanka, and now as Director – IT at Gazelle Key International, I've looked after email systems, networks, backups, user access and the day-to-day tools a business depends on.
+
+In 2025 I decided it was time to learn the other side: how modern websites and web applications are actually built.
+
+## Why now?
+
+Every business I've worked with runs on web tools — online platforms, CRM systems, booking and supplier portals. Understanding how they're built makes me better at choosing them, supporting them, and explaining them to the people who use them.
+
+So I went back to studying:
+
+1. **Certificate in Web Development** (January – May 2025)
+2. **Advanced Certificate in Web Development** (May – October 2025)
+
+## What surprised me
+
+- **The fundamentals still matter.** HTML, CSS and JavaScript are the base of everything, just like networking basics are for IT administration.
+- **Modern frameworks do a lot of work for you.** This site is built with **Next.js** and **Tailwind CSS**. Things that used to take a lot of setup now come almost ready to use.
+- **Good habits carry over.** Documentation, testing changes before going live, keeping passwords out of shared code — the same discipline I learned in banking applies to web development.
+
+## Building this website
+
+This site is my first real project. It has my portfolio, this blog, a contact form, and a private admin area where I write posts and update my details without touching the code.
+
+> Building something yourself is the fastest way to understand how it works.
+
+## What's next
+
+I'll keep improving this site and keep writing here about what I learn — both from IT leadership and from building for the web. If you're also changing direction or learning something new later in your career, I'd love to hear from you. [Get in touch](/#contact).`,
+    cover: "",
+    tags: ["Web Development", "Learning"],
+    published: true,
+    publishedAt: "2026-11-06",
+    updatedAt: "2026-11-06T02:00:00.000Z",
+  },
+  {
+    id: "central-bank-lessons",
+    slug: "lessons-from-11-years-at-the-central-bank",
+    title: "5 lessons from 11 years at the Central Bank of Sri Lanka",
+    excerpt:
+      "From 2008 to 2019 I worked in one of the most regulated environments there is. Here's what it taught me about data, documentation and people.",
+    body: `I joined the Central Bank of Sri Lanka in March 2008 as a Bank Office Assistant and stayed for eleven years. It was my first long role, and it shaped how I approach every job since — including running IT for a business today.
+
+Here are five lessons I still use every week.
+
+## 1. Accuracy is not optional
+
+In banking, a small data entry mistake doesn't stay small. It flows into reports, decisions and records that other people trust. I learned to treat every entry as if someone senior would rely on it — because they usually did.
+
+## 2. If it isn't documented, it didn't happen
+
+A big part of my work was preparing, verifying and maintaining official documents for supervisory review. Good documentation protects the organisation, the customer and you. Today I apply the same rule to IT: every system change, policy and procedure gets written down.
+
+## 3. Reports should answer a question
+
+I prepared routine and ad-hoc reports for senior officers. The best reports weren't the longest ones — they were the ones that answered the question the reader actually had. Before building any report, ask: *what decision will this help someone make?*
+
+## 4. Systems are only as good as the people using them
+
+I supported the operations of the **Currency Management Module** and trained junior staff on internal banking systems. The software mattered, but what made the biggest difference was people understanding *why* each step existed. Training is not a one-time task — it's part of running any system.
+
+## 5. Compliance is a habit, not a checklist
+
+Working in a regulated environment teaches you to build compliance into daily work instead of rushing it at the end. Later, as Director – IT, the same mindset helped me manage administration, documentation and compliance across travel, import and export operations.
+
+---
+
+Eleven years is a long time in one place, but I'm grateful for it. It gave me a foundation of precision and patience that I've carried into IT administration, business leadership, and now web development.
+
+What did your first long job teach you? I'd be glad to hear — [send me a message](/#contact).`,
+    cover: "",
+    tags: ["Career", "Banking", "Leadership"],
+    published: true,
+    publishedAt: "2026-11-06",
+    updatedAt: "2026-11-06T01:00:00.000Z",
+  },
   {
     id: "welcome",
     slug: "welcome-to-my-blog",
