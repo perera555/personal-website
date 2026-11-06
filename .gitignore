@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# portfolio admin: visitor messages
-/content/messages.json
+# portfolio admin: local data (posts, edits, messages)
+/content/

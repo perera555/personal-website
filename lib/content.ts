@@ -1,30 +1,8 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { cacheLife, cacheTag } from "next/cache";
 import { defaultContent, type SiteContent } from "./default-content";
-
-// Content is stored as JSON files in the /content folder at the project root.
-const DIR = path.join(process.cwd(), "content");
-const SITE_FILE = path.join(DIR, "site.json");
-const MESSAGES_FILE = path.join(DIR, "messages.json");
+import { readStore, writeStore } from "./store";
 
 export const CONTENT_TAG = "site-content";
-
-async function readJson<T>(file: string): Promise<T | null> {
-  try {
-    return JSON.parse(await readFile(file, "utf-8")) as T;
-  } catch {
-    return null;
-  }
-}
-
-// Write to a temp file then rename, so a crash never leaves a half-written file.
-async function writeJson(file: string, data: unknown) {
-  await mkdir(DIR, { recursive: true });
-  const tmp = `${file}.tmp`;
-  await writeFile(tmp, JSON.stringify(data, null, 2), "utf-8");
-  await rename(tmp, file);
-}
 
 /* ---------------- Site content ---------------- */
 
@@ -32,12 +10,12 @@ export async function getContent(): Promise<SiteContent> {
   "use cache";
   cacheLife("max");
   cacheTag(CONTENT_TAG);
-  const saved = await readJson<unknown>(SITE_FILE);
+  const saved = await readStore<unknown>("site");
   return saved ? sanitizeContent(saved) : defaultContent;
 }
 
 export async function saveContent(content: SiteContent) {
-  await writeJson(SITE_FILE, content);
+  await writeStore("site", content);
 }
 
 /* ---------------- Messages (contact form inbox) ---------------- */
@@ -52,17 +30,18 @@ export type Message = {
 };
 
 export async function getMessages(): Promise<Message[]> {
-  return (await readJson<Message[]>(MESSAGES_FILE)) ?? [];
+  const all = await readStore<Message[]>("messages");
+  return Array.isArray(all) ? all : [];
 }
 
 export async function addMessage(m: Message) {
   const all = await getMessages();
   all.unshift(m);
-  await writeJson(MESSAGES_FILE, all.slice(0, 500));
+  await writeStore("messages", all.slice(0, 500));
 }
 
 export async function updateMessages(fn: (all: Message[]) => Message[]) {
-  await writeJson(MESSAGES_FILE, fn(await getMessages()));
+  await writeStore("messages", fn(await getMessages()));
 }
 
 /* ---------------- Validation ---------------- */

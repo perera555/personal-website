@@ -31,7 +31,15 @@ SESSION_SECRET=any-long-random-text
 
 ## Where content is stored
 
-Blog posts, page content and messages are saved as JSON files in the `content/` folder. The site needs a host with a permanent disk, such as a VPS, Railway (with a volume) or Render (with a disk).
+- **Online (Vercel):** in an Upstash Redis database, used automatically when `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`) are set.
+- **On your computer:** as JSON files in the `content/` folder.
+
+## Deploying to Vercel
+
+1. Import this GitHub repository at vercel.com.
+2. In the project, go to **Storage → Create Database → Upstash (Redis)** and connect it to the project.
+3. Under **Settings → Environment Variables**, add `ADMIN_PASSWORD`, `SESSION_SECRET` and `SITE_URL`.
+4. Redeploy. After that, every push to `main` deploys automatically.
 
 ## Writing blog posts
 

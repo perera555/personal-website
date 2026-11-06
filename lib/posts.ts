@@ -1,10 +1,5 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { cacheLife, cacheTag } from "next/cache";
-
-// Blog posts are stored in content/posts.json (next to site.json).
-const DIR = path.join(process.cwd(), "content");
-const POSTS_FILE = path.join(DIR, "posts.json");
+import { readStore, writeStore } from "./store";
 
 export const POSTS_TAG = "blog-posts";
 
@@ -49,12 +44,8 @@ Thanks for reading — feel free to [get in touch](/#contact) if you'd like to t
 ];
 
 async function readAll(): Promise<Post[]> {
-  try {
-    const data = JSON.parse(await readFile(POSTS_FILE, "utf-8"));
-    return Array.isArray(data) ? data : starterPosts;
-  } catch {
-    return starterPosts;
-  }
+  const data = await readStore<Post[]>("posts");
+  return Array.isArray(data) ? data : starterPosts;
 }
 
 const byDateDesc = (a: Post, b: Post) => b.publishedAt.localeCompare(a.publishedAt) || b.updatedAt.localeCompare(a.updatedAt);
@@ -80,10 +71,7 @@ export async function getPublishedPost(slug: string): Promise<Post | null> {
 }
 
 async function writeAll(posts: Post[]) {
-  await mkdir(DIR, { recursive: true });
-  const tmp = `${POSTS_FILE}.tmp`;
-  await writeFile(tmp, JSON.stringify(posts, null, 2), "utf-8");
-  await rename(tmp, POSTS_FILE);
+  await writeStore("posts", posts);
 }
 
 export function slugify(s: string) {

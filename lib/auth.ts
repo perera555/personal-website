@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
 // Simple single-user admin login.
 // The password comes from the ADMIN_PASSWORD environment variable (.env.local).
@@ -59,5 +60,6 @@ export async function isAdmin() {
   if (!key || !token) return false;
   const [expires, sig] = token.split(".");
   if (!expires || !sig || !safeEqual(sig, sign(expires, key))) return false;
+  await connection(); // the expiry check uses the current time, so it must run per request
   return Number(expires) > Date.now();
 }
