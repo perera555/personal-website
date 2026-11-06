@@ -7,12 +7,24 @@ import { getContent } from "@/lib/content";
 import type { SiteContent } from "@/lib/default-content";
 import { getPublishedPosts, type Post } from "@/lib/posts";
 import { getSiteUrl, jsonLd, nameVariants } from "@/lib/site-url";
+import { platformLabel, SocialEmbed } from "@/components/social-embed";
+import { getLatestVideos, getSocialPosts, type SocialPost } from "@/lib/social";
 import { ContactForm } from "./contact-form";
 
 type C = { c: SiteContent };
 
 export default async function Home() {
-  const [c, posts] = await Promise.all([getContent(), getPublishedPosts()]);
+  const [c, posts, socialPosts] = await Promise.all([getContent(), getPublishedPosts(), getSocialPosts()]);
+  const videos = await getLatestVideos(c.profile.youtubeChannelId);
+  // Newest YouTube videos (automatic) first, then posts added in /admin → Social
+  const social: Pick<SocialPost, "platform" | "embedUrl" | "url">[] = [
+    ...videos.map((v) => ({
+      platform: "youtube" as const,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${v.id}`,
+      url: `https://www.youtube.com/watch?v=${v.id}`,
+    })),
+    ...socialPosts,
+  ].filter((p, i, all) => all.findIndex((x) => x.embedUrl === p.embedUrl) === i);
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(personSchema(c))} />
@@ -20,6 +32,7 @@ export default async function Home() {
       <main className="flex-1">
         <Hero c={c} />
         {posts.length > 0 && <LatestPosts posts={posts} />}
+        {social.length > 0 && <Social c={c} items={social.slice(0, 6)} />}
         <About c={c} />
         {c.experience.length > 0 && <Experience c={c} />}
         {(c.degrees.length > 0 || c.certifications.length > 0) && <Education c={c} />}
@@ -87,7 +100,7 @@ function Section({
   children,
 }: {
   id: string;
-  index: string;
+  index?: string;
   eyebrow: string;
   title: string;
   action?: React.ReactNode;
@@ -99,7 +112,7 @@ function Section({
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
-              <span className="text-muted">{index} —</span> {eyebrow}
+              {index && <span className="text-muted">{index} —</span>} {eyebrow}
             </p>
             <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
               {title}
@@ -404,6 +417,50 @@ function LatestPosts({ posts }: { posts: Post[] }) {
           ))}
         </div>
       )}
+    </Section>
+  );
+}
+
+function Social({ c, items }: C & { items: Pick<SocialPost, "platform" | "embedUrl" | "url">[] }) {
+  const links = socialLinks(c.profile).filter((l) => l.name !== "LinkedIn" || items.some((i) => i.platform === "linkedin"));
+  return (
+    <Section
+      id="social"
+      eyebrow="Social"
+      title="Latest on social media"
+      action={
+        links.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {links.map((l) => (
+              <a
+                key={l.name}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer me"
+                className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-accent shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Follow on {l.name} ↗
+              </a>
+            ))}
+          </div>
+        )
+      }
+    >
+      <div className="columns-1 gap-5 md:columns-2 lg:columns-3">
+        {items.map((p) => (
+          <div key={p.embedUrl} className="mb-5 break-inside-avoid rounded-2xl border border-border bg-surface p-2 depth">
+            <SocialEmbed post={p} />
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block px-2 pt-2 pb-1 text-xs font-medium text-muted hover:text-accent"
+            >
+              View on {platformLabel[p.platform]} ↗
+            </a>
+          </div>
+        ))}
+      </div>
     </Section>
   );
 }

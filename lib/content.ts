@@ -81,6 +81,7 @@ export function sanitizeContent(input: unknown): SiteContent {
       facebook: safeUrl(p.facebook),
       instagram: safeUrl(p.instagram),
       youtube: safeUrl(p.youtube),
+      youtubeChannelId: /^UC[\w-]{22}$/.test(str(p.youtubeChannelId, 30)) ? str(p.youtubeChannelId, 30) : "",
       photo: safeUrl(p.photo),
       cvFile: safeUrl(p.cvFile),
       availability: str(p.availability, 120),

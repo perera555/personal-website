@@ -8,7 +8,7 @@ import { Redis } from "@upstash/redis";
  * - On your computer: JSON files in the /content folder.
  */
 
-type Key = "site" | "posts" | "messages";
+type Key = "site" | "posts" | "messages" | "social";
 
 const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
 const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;

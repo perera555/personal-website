@@ -22,6 +22,7 @@ export type SiteContent = {
     facebook: string;
     instagram: string;
     youtube: string;
+    youtubeChannelId: string; // e.g. UCxxxxxxxxxxxxxxxxxxxxxx — your latest videos then appear automatically
     photo: string; // path in /public, e.g. "/profile.jpg" — empty = show initials
     cvFile: string; // path in /public, e.g. "/cv.pdf" — empty = hide button
     availability: string;
@@ -53,6 +54,7 @@ export const defaultContent: SiteContent = {
     facebook: "",
     instagram: "",
     youtube: "",
+    youtubeChannelId: "",
     photo: "",
     cvFile: "",
     availability: "Available immediately",

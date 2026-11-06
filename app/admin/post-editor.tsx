@@ -89,7 +89,7 @@ export function PostEditor({ post, today, justCreated }: { post: Post | null; to
         />
 
         {/* Write / Preview */}
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface/90 backdrop-blur depth">
           <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <div className="flex gap-1">
               {(["write", "preview"] as const).map((t) => (
@@ -123,7 +123,7 @@ export function PostEditor({ post, today, justCreated }: { post: Post | null; to
           )}
         </div>
 
-        <div className="grid gap-4 rounded-2xl border border-border bg-surface p-5 sm:grid-cols-2">
+        <div className="grid gap-4 rounded-2xl border border-border bg-surface/90 backdrop-blur depth p-5 sm:grid-cols-2">
           <label className="block">
             <span className="text-xs font-medium text-muted">Web address</span>
             <div className="mt-1 flex items-center rounded-lg border border-border bg-background pl-3 text-sm focus-within:border-accent">
@@ -195,7 +195,7 @@ export function PostEditor({ post, today, justCreated }: { post: Post | null; to
               <button
                 type="submit"
                 disabled={pending || (!dirty && !!post)}
-                className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-background disabled:opacity-40"
+                className="rounded-xl bg-linear-to-br from-accent to-accent/75 shadow-lg shadow-accent/25 transition hover:-translate-y-0.5 hover:shadow-xl px-5 py-2 text-sm font-medium text-background disabled:opacity-40"
               >
                 {pending ? "Saving…" : post ? "Save" : "Create post"}
               </button>

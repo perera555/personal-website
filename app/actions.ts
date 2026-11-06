@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { checkPassword, endSession, isAdmin, isPasswordConfigured, startSession } from "@/lib/auth";
 import { addMessage, CONTENT_TAG, sanitizeContent, saveContent, updateMessages } from "@/lib/content";
 import { POSTS_TAG, removePost, upsertPost } from "@/lib/posts";
+import { addSocialPost, parseSocialLink, removeSocialPost, SOCIAL_TAG } from "@/lib/social";
 
 export type FormState = { ok?: boolean; error?: string; message?: string; saved?: string };
 
@@ -88,6 +89,39 @@ export async function deletePost(formData: FormData) {
   await removePost(String(formData.get("id")));
   updateTag(POSTS_TAG);
   redirect("/admin?tab=blog");
+}
+
+/* ---------------- Social posts ---------------- */
+
+export async function addSocialLink(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const parsed = parseSocialLink(String(formData.get("url") ?? "").slice(0, 3000));
+  if (!parsed) {
+    return {
+      error:
+        "That link wasn't recognised. Paste the link of one post from Facebook, Instagram, LinkedIn or YouTube (starting with https://).",
+    };
+  }
+  try {
+    await addSocialPost({
+      ...parsed,
+      id: crypto.randomUUID(),
+      note: String(formData.get("note") ?? "").trim().slice(0, 300),
+      addedAt: new Date().toISOString(),
+    });
+  } catch {
+    return { error: "Saving failed — please try again." };
+  }
+  updateTag(SOCIAL_TAG);
+  refresh();
+  return { ok: true, message: `Added your ${parsed.platform} post to the website.` };
+}
+
+export async function deleteSocialLink(formData: FormData) {
+  await requireAdmin();
+  await removeSocialPost(String(formData.get("id")));
+  updateTag(SOCIAL_TAG);
+  refresh();
 }
 
 /* ---------------- Contact form ---------------- */

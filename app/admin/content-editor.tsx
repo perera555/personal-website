@@ -75,7 +75,7 @@ function Lines({
 
 function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface p-5 sm:p-6">
+    <section className="rounded-2xl border border-border bg-surface/90 backdrop-blur depth p-5 sm:p-6">
       <h2 className="font-semibold tracking-tight">{title}</h2>
       {description && <p className="mt-1 text-sm text-muted">{description}</p>}
       <div className="mt-5 space-y-4">{children}</div>
@@ -194,7 +194,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
     <form action={formAction} className="space-y-6 pb-28">
       <input type="hidden" name="content" value={json} />
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit your website</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight">Edit your website</h1>
         <p className="mt-1 text-sm text-muted">Make changes below, then press Save. Your site updates right away.</p>
       </div>
 
@@ -232,6 +232,13 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
             value={p.youtube}
             placeholder="https://www.youtube.com/@yourname"
             onChange={(v) => setProfile({ youtube: v })}
+          />
+          <Field
+            label="YouTube channel ID (for automatic videos)"
+            value={p.youtubeChannelId}
+            placeholder="UCxxxxxxxxxxxxxxxxxxxxxx"
+            hint="Find it on YouTube: profile picture → Settings → Advanced settings → Channel ID. Starts with UC."
+            onChange={(v) => setProfile({ youtubeChannelId: v })}
           />
           <Field
             label="Photo"
@@ -427,7 +434,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
             <button
               type="submit"
               disabled={!dirty || pending}
-              className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-background disabled:opacity-40"
+              className="rounded-xl bg-linear-to-br from-accent to-accent/75 shadow-lg shadow-accent/25 transition hover:-translate-y-0.5 hover:shadow-xl px-5 py-2 text-sm font-medium text-background disabled:opacity-40"
             >
               {pending ? "Saving…" : "Save"}
             </button>
