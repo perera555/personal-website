@@ -28,15 +28,19 @@ export function FeaturedPost({ post }: { post: Post }) {
         <p className="font-mono text-xs text-muted">
           {formatDate(post.publishedAt)} · {readingTime(post.body)} min read
         </p>
-        <h3 className="pop mt-4 font-display text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
-          <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0 group-hover:text-accent">
+        {/* The title link stretches over the whole card (after:inset-0), so clicking anywhere opens the post */}
+        <h3 className="mt-4 font-display text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl">
+          <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0 after:z-10 group-hover:text-accent">
             {post.title}
           </Link>
         </h3>
         {post.excerpt && <p className="mt-4 leading-relaxed text-muted">{post.excerpt}</p>}
-        <p className="mt-6 text-sm font-medium text-accent">
+        <Link
+          href={`/blog/${post.slug}`}
+          className="relative z-20 mt-6 inline-flex w-fit items-center gap-1 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background shadow-md transition hover:shadow-lg"
+        >
           Read the post <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-        </p>
+        </Link>
       </div>
     </TiltCard>
   );
@@ -59,8 +63,8 @@ export function PostCard({ post }: { post: Post }) {
         <p className="font-mono text-xs text-muted">
           {formatDate(post.publishedAt)} · {readingTime(post.body)} min read
         </p>
-        <h3 className="pop mt-3 font-display text-xl leading-snug font-semibold tracking-tight">
-          <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0 group-hover:text-accent">
+        <h3 className="mt-3 font-display text-xl leading-snug font-semibold tracking-tight">
+          <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0 after:z-10 group-hover:text-accent">
             {post.title}
           </Link>
         </h3>
@@ -74,6 +78,12 @@ export function PostCard({ post }: { post: Post }) {
             ))}
           </ul>
         )}
+        <Link
+          href={`/blog/${post.slug}`}
+          className={`relative z-20 ${post.tags.length > 0 ? "mt-4" : "mt-auto pt-5"} w-fit text-sm font-medium text-accent hover:underline`}
+        >
+          Read the post →
+        </Link>
       </div>
     </TiltCard>
   );

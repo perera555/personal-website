@@ -6,7 +6,7 @@ import { getPublishedPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Notes on IT leadership, systems, data and web development.",
+  description: "Stories, thoughts and updates — on technology, work, travel and life.",
 };
 
 export default async function BlogPage() {
@@ -24,7 +24,7 @@ export default async function BlogPage() {
             </p>
             <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">Notes &amp; updates</h1>
             <p className="mt-4 text-lg text-muted">
-              Thoughts on IT leadership, systems, data and my journey in web development — by {c.profile.name}.
+              Stories, thoughts and updates — on technology, work, travel and life. By {c.profile.name}.
             </p>
           </div>
 
