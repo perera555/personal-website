@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dhanushka Perera — Personal Website & Blog
 
-## Getting Started
+My personal website for sharing blog posts, plus my portfolio (experience, education and skills). Built with Next.js 16 and Tailwind CSS 4.
 
-First, run the development server:
+## Features
+
+- **Blog** at `/blog`: the newest post is featured on the homepage, and every post has share buttons for LinkedIn, Facebook, WhatsApp and X, plus copy link
+- **Portfolio**: about, experience timeline, qualifications and skills
+- **Contact form**: messages arrive in the admin inbox
+- **Admin** at `/admin`: write and edit blog posts (with live preview), edit all website text and read messages
+- 3D cube, tilting cards, and light/dark mode
+
+## Run it locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The admin is at http://localhost:3000/admin.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Settings (`.env.local`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file in the project folder. It is never uploaded to GitHub.
 
-## Learn More
+```
+ADMIN_PASSWORD=your-password-here
+SESSION_SECRET=any-long-random-text
+# SITE_URL=https://your-domain.com   (once the site is online)
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Where content is stored
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Blog posts, page content and messages are saved as JSON files in the `content/` folder. The site needs a host with a permanent disk, such as a VPS, Railway (with a volume) or Render (with a disk).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Writing blog posts
 
-## Deploy on Vercel
+Posts use simple formatting:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+## Heading
+**bold**  *italic*  [link](https://example.com)
+- bullet list
+> quote
+![image](/images/photo.jpg)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Put images in the `public/` folder and refer to them as `/your-image.jpg`.

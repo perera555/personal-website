@@ -1,26 +1,301 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #f7f6f2;
+  --surface: #ffffff;
+  --foreground: #14171c;
+  --muted: #5a6170;
+  --border: #e4e2db;
+  --accent: #1d4e89;
+  --accent-soft: #e5edf7;
+  --glow: #c9dbf3;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0c0f14;
+    --surface: #141920;
+    --foreground: #eceef2;
+    --muted: #9aa3b2;
+    --border: #252c36;
+    --accent: #8ab8f2;
+    --accent-soft: #17263a;
+    --glow: #1a3354;
   }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+/* Gentle entrance for the hero */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ---------- 3D: hero cube ---------- */
+.scene {
+  perspective: 900px;
+}
+.cube {
+  --s: 9rem;
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+  transform-style: preserve-3d;
+  animation: spin 22s linear infinite;
+}
+.scene:hover .cube {
+  animation-play-state: paused;
+}
+.cube-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--accent-soft) 85%, transparent));
+  box-shadow: inset 0 0 40px color-mix(in srgb, var(--accent) 12%, transparent);
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+.cube-face:nth-child(1) { transform: translateZ(calc(var(--s) / 2)); }
+.cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+.cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+.cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+.cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+.cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+
+@keyframes spin {
+  from { transform: rotateX(-18deg) rotateY(0deg); }
+  to { transform: rotateX(-18deg) rotateY(360deg); }
+}
+
+.orbit {
+  position: absolute;
+  inset: -2.5rem;
+  border-radius: 9999px;
+  border: 1px dashed color-mix(in srgb, var(--accent) 40%, transparent);
+  transform: rotateX(72deg);
+  transform-style: preserve-3d;
+  animation: orbit 14s linear infinite;
+}
+.orbit::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent);
+}
+@keyframes orbit {
+  from { transform: rotateX(72deg) rotateZ(0deg); }
+  to { transform: rotateX(72deg) rotateZ(360deg); }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  50% { transform: translateY(-10px); }
+}
+
+/* Soft glowing background blobs */
+.glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  background: var(--glow);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ---------- 3D: tilt cards (see components/tilt-card.tsx) ---------- */
+.tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+  will-change: transform;
+}
+.tilt:hover {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 18px 40px -12px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.tilt[data-active] {
+  transition: transform 0.08s linear, box-shadow 0.35s;
+}
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    rgb(255 255 255 / 0.22),
+    transparent 55%
+  );
+}
+.tilt[data-active] .tilt-glare {
+  opacity: 1;
+}
+.pop {
+  transform: translateZ(28px);
+}
+
+/* Layered "3D" shadow for raised panels */
+.depth {
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.05) inset,
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 8px 24px -8px rgb(0 0 0 / 0.12),
+    0 30px 60px -30px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise,
+  .cube,
+  .orbit,
+  .float {
+    animation: none;
+  }
+  .tilt {
+    transform: none !important;
+  }
+}
+
+/* ---------- Blog article typography ---------- */
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--foreground);
+}
+.prose > * + * {
+  margin-top: 1.25em;
+}
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin-top: 2em;
+}
+.prose h2 {
+  font-size: 1.75rem;
+}
+.prose h3 {
+  font-size: 1.375rem;
+}
+.prose h4 {
+  font-size: 1.125rem;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose strong {
+  font-weight: 600;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose li::marker {
+  color: var(--muted);
+}
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.25em 0 0.25em 1.1em;
+  font-family: var(--font-fraunces), serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--muted);
+}
+.prose code {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.875em;
+  background: var(--accent-soft);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+.prose pre {
+  background: #0f1720;
+  color: #e6edf3;
+  padding: 1.1em 1.25em;
+  border-radius: 12px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+.prose img {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  max-width: 100%;
+  height: auto;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2.5em 0;
 }
